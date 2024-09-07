@@ -12,12 +12,17 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             CustomText(
-              content: 'English',
+              content: 'English v',
               font_size: 14,
             ),
             Icon(Icons.abc),
-            Image.asset(
-              'lib/Assets/icons/contact-mail.png',color: Colors.white,height: 30,width: 30,
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, '/aboutpage');
+              },
+              child: Image.asset(
+                'lib/Assets/icons/contact-mail.png',color: Colors.white,height: 30,width: 30,
+              ),
             ),
           ],
         ),

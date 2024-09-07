@@ -14,157 +14,162 @@ class CartPage extends StatelessWidget {
     TextEditingController couponController = TextEditingController();
     final cartModel = Provider.of<CartModel>(context);
 
+    // Get screen dimensions and keyboard height
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardHeight = mediaQuery.viewInsets.bottom;
+    final screenHeight = mediaQuery.size.height;
+    final screenWidth = mediaQuery.size.width;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Cart'),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Column(
-          children: [
-            TopCont(content: 'Cart Items'),
-            CustomText(
-              content: 'Swipe left to delete an item',
-              color: Colors.grey,
-              font_size: 14,
-            ),
-            Expanded(
-              child: cartModel.items.isNotEmpty
-                  ? ListView.builder(
-                itemCount: cartModel.items.length,
-                itemBuilder: (context, index) {
-                  final cartItem = cartModel.items[index];
-                  return Dismissible(
-                    key: ValueKey(cartItem),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      color: Colors.red,
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Icon(
-                            Icons.delete,
-                            color: Colors.white,
-                            size: 30,
+        padding: EdgeInsets.only(bottom: keyboardHeight),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              TopCont(content: 'Cart Items'),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.05, // Responsive padding
+                ),
+                child: CustomText(
+                  content: 'Swipe left to delete an item',
+                  color: Colors.grey,
+                  font_size: screenWidth * 0.035, // Responsive font size
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.02), // Responsive spacing
+              Container(
+                height: screenHeight * 0.4, // Adjust height responsively
+                child: cartModel.items.isNotEmpty
+                    ? ListView.builder(
+                  itemCount: cartModel.items.length,
+                  itemBuilder: (context, index) {
+                    final cartItem = cartModel.items[index];
+                    return Dismissible(
+                      key: ValueKey(cartItem),
+                      direction: DismissDirection.endToStart,
+                      background: Container(
+                        color: Colors.red,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: screenWidth * 0.08, // Responsive icon size
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    onDismissed: (direction) {
-                      cartModel.removeProduct(cartItem.product);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${cartItem.product.name} removed from cart'),
-                        ),
-                      );
-                    },
-                    child: CartItemWidget(cartItem: cartItem),
-                  );
-                },
-              )
-                  : Center(
-                child: CustomText(
-                  content: 'No items in cart.',
-                  font_size: 16,
-                  color: Colors.grey,
+                      onDismissed: (direction) {
+                        cartModel.removeProduct(cartItem.product);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${cartItem.product.name} removed from cart'),
+                          ),
+                        );
+                      },
+                      child: CartItemWidget(cartItem: cartItem),
+                    );
+                  },
+                )
+                    : Center(
+                  child: CustomText(
+                    content: 'No items in cart.',
+                    font_size: screenWidth * 0.04, // Responsive font size
+                    color: Colors.grey,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: CouponSection(
-                couponController: couponController,
-                onApplyCoupon: () {
-                  // Handle the coupon application logic here
-                  final couponCode = couponController.text;
-                  // Apply coupon logic
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Coupon code $couponCode applied!'),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        content: 'Cart Subtotal:',
-                        font_size: 16,
-                        color: Colors.black,
+              Padding(
+                padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                child: CouponSection(
+                  couponController: couponController,
+                  onApplyCoupon: () {
+                    // Handle the coupon application logic here
+                    final couponCode = couponController.text;
+                    // Apply coupon logic
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Coupon code $couponCode applied!'),
                       ),
-                      CustomText(
-                        content: '\$${cartModel.totalPrice.toStringAsFixed(2)}',
-                        font_size: 16,
-                        color: Colors.black,
-                        is_bold: true,
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04), // Responsive padding
+                child: Container(
+                  padding: EdgeInsets.all(screenWidth * 0.04), // Responsive padding
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildRow(
+                        'Cart Subtotal:',
+                        '\$${cartModel.totalPrice.toStringAsFixed(2)}',
+                        screenWidth,
+                      ),
+                      SizedBox(height: screenHeight * 0.01), // Responsive spacing
+                      _buildRow(
+                        'Shipping Charge:',
+                        '\$3.00',
+                        screenWidth,
+                      ),
+                      Divider(thickness: 1, color: Colors.black),
+                      SizedBox(height: screenHeight * 0.01), // Responsive spacing
+                      _buildRow(
+                        'Total Amount:',
+                        '\$${(cartModel.totalPrice + 3.00).toStringAsFixed(2)}', // Total including shipping
+                        screenWidth,
+                        isBold: true,
+                        fontSize: screenWidth * 0.045, // Responsive font size for total amount
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        content: 'Shipping Charge:',
-                        font_size: 16,
-                        color: Colors.black,
-                      ),
-                      CustomText(
-                        content: '\$3.00',
-                        font_size: 16,
-                        color: Colors.black,
-                        is_bold: true,
-                      ),
-                    ],
-                  ),
-                  Divider(thickness: 1, color: Colors.black),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        content: 'Total Amount:',
-                        font_size: 18,
-                        color: Colors.black,
-                        is_bold: true,
-                      ),
-                      CustomText(
-                        content: '\$${(cartModel.totalPrice + 3.00).toStringAsFixed(2)}', // Total including shipping
-                        font_size: 18,
-                        color: Colors.black,
-                        is_bold: true,
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: CustomButton(
-                content: 'Check Out',
-                onTap: () {
-                  Navigator.pushNamed(context, '/checkoutpage');
-                },
+              SizedBox(height: screenHeight * 0.02), // Responsive spacing
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04), // Responsive padding
+                child: CustomButton(
+                  content: 'Check Out',
+                  onTap: () {
+                    Navigator.pushNamed(context, '/checkoutpage');
+                  },
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-          ],
+              SizedBox(height: screenHeight * 0.02), // Responsive spacing
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildRow(String label, String value, double screenWidth, {bool isBold = false, double? fontSize}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          content: label,
+          font_size: fontSize ?? screenWidth * 0.04, // Responsive font size
+          color: Colors.black,
+        ),
+        CustomText(
+          content: value,
+          font_size: fontSize ?? screenWidth * 0.04, // Responsive font size
+          color: Colors.black,
+          is_bold: isBold,
+        ),
+      ],
     );
   }
 }
@@ -176,27 +181,29 @@ class CartItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return ListTile(
       leading: Image.asset(
         cartItem.product.imagePath,
-        width: 50,
-        height: 50,
+        width: screenWidth * 0.15, // Responsive width
+        height: screenWidth * 0.15, // Responsive height
         fit: BoxFit.cover,
       ),
       title: CustomText(
         content: cartItem.product.name,
         is_bold: true,
-        font_size: 16,
+        font_size: screenWidth * 0.045, // Responsive font size
       ),
       subtitle: CustomText(
         content: '\$${cartItem.product.price.toStringAsFixed(2)} x ${cartItem.quantity}',
-        font_size: 14,
+        font_size: screenWidth * 0.04, // Responsive font size
         color: Colors.grey,
       ),
       trailing: CustomText(
         content: '\$${(cartItem.product.price * cartItem.quantity).toStringAsFixed(2)}',
         is_bold: true,
-        font_size: 16,
+        font_size: screenWidth * 0.045, // Responsive font size
         color: Theme.of(context).primaryColor,
       ),
     );

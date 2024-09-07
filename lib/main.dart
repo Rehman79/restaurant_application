@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app/Models/cart_model.dart'; // Import CartModel
+import 'package:restaurant_app/Models/cart_model.dart';
 import 'package:restaurant_app/views/Cart_page.dart';
 import 'package:restaurant_app/views/about_page.dart';
 import 'package:restaurant_app/views/checkout_page.dart';
-import 'package:restaurant_app/views/contact_page.dart';
 import 'package:restaurant_app/views/franchise_page.dart';
 import 'package:restaurant_app/views/home_page.dart';
 import 'package:restaurant_app/views/landing_page.dart';
@@ -44,7 +43,6 @@ void main() {
         '/menupage':(context)=>MenuPage(),
         '/franchisepage':(context)=>FranchisePage(),
         '/aboutpage':(context)=>AboutPage(),
-        '/contactpage':(context)=>ContactPage(),
         '/checkoutpage':(context)=>CheckoutPage(),
         '/cartpage':(context)=>CartPage(),
       },

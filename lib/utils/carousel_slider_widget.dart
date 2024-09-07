@@ -41,7 +41,7 @@ class _CarouselSliderWidgetState extends State<CarouselSliderWidget> {
             viewportFraction: 1.0,
             initialPage: 0,
             enableInfiniteScroll: true,
-            autoPlay: false,  // Enable auto play
+            autoPlay: true,  // Enable auto play
             autoPlayInterval: Duration(seconds: 7),  // Interval for auto play
             autoPlayAnimationDuration: Duration(milliseconds: 400),  // Animation duration
             autoPlayCurve: Curves.easeInOut,  // Animation curve

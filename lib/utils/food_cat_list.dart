@@ -45,7 +45,9 @@ class FoodCatList extends StatelessWidget {
                     width: width*0.2,
                     child: CustomButton(
                       content: titles[index],
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushNamed(context, '/menupage');
+                      },
                     ),
                   ),
                 ),
